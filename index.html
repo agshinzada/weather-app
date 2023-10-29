@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Simple Weather App</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="assets/apple-touch-icon.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="assets/favicon-32x32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="assets/favicon-16x16.png"
+    />
+    <link rel="manifest" href="assets/site.webmanifest" />
+  </head>
+  <body>
+    <div class="card">
+      <form class="search">
+        <input type="text" placeholder="Search..." spellcheck="false" />
+        <button type="submit"><img src="assets/images/search.png" /></button>
+      </form>
+      <div class="weather">
+        <img
+          src="assets/images/rain.png"
+          alt="weather-icon"
+          class="weather-icon"
+        />
+        <h1 class="temp"></h1>
+        <h2 class="city"></h2>
+        <div class="details">
+          <div class="col">
+            <img src="assets/images/humidity.png" alt="humidity" />
+            <div class="humidity">
+              <p id="percentHum"></p>
+              <p>Humidity</p>
+            </div>
+          </div>
+          <div class="col">
+            <img src="assets/images/wind.png" alt="wind" />
+            <div class="wind">
+              <p id="percentWin"></p>
+              <p>Wind Speed</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const apiKey = "48fa96bc0f2d21c0670b73b76735b490";
+      const apiUrl =
+        "https://api.openweathermap.org/data/2.5/weather?units=metric";
+      const form = document.querySelector(".search");
+      const temp = document.querySelector(".temp");
+      const city = document.querySelector(".city");
+      const humid = document.getElementById("percentHum");
+      const wind = document.getElementById("percentWin");
+      const img = document.querySelector(".weather-icon");
+
+      form.addEventListener("submit", function (e) {
+        if (e.target[0].value.trim() === "") {
+        } else {
+          checkWeather(e.target[0].value);
+        }
+        e.preventDefault();
+      });
+
+      async function checkWeather(name = "baku") {
+        const response = await fetch(apiUrl + `&appid=${apiKey}&q=${name}`);
+        if (response.status === 200 && response.statusText === "OK") {
+          const data = await response.json();
+          console.log(data);
+
+          switch (data.weather[0].main) {
+            case "Clouds":
+              img.src = "assets/images/clouds.png";
+              break;
+
+            case "Drizzle":
+              img.src = "assets/images/drizzle.png";
+              break;
+            case "Clear":
+              img.src = "assets/images/clear.png";
+              break;
+            case "Mist":
+              img.src = "assets/images/mist.png";
+              break;
+            case "Rain":
+              img.src = "assets/images/rain.png";
+              break;
+            case "Snow":
+              img.src = "assets/images/snow.png";
+              break;
+
+            default:
+              break;
+          }
+          temp.innerHTML = `${Math.floor(data.main.temp)} °C`;
+          city.innerHTML = data.name;
+          humid.innerHTML = `${data.main.humidity}%`;
+          wind.innerHTML = `${data.wind.speed} km/h`;
+        } else {
+          alert("City not found!");
+        }
+      }
+
+      checkWeather();
+    </script>
+  </body>
+</html>
